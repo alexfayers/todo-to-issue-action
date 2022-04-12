@@ -91,9 +91,10 @@ class GitHubClient(object):
         # change an input like https://github.com/{org}/{repo}/{extra}.diff
         # to https://{token}:x-oauth-basic@api.github.com/repos/{org}/{repo}/{extra}
 
+        diff_url = diff_url.replace('github.com', f'{self.token}:x-oauth-basic@api.github.com/repos').replace(".diff", "") \
+            .replace("/pull/", "/pulls/")
         print(diff_url, diff_headers)
-        diff_url = diff_url.replace('github.com', f'{self.token}:x-oauth-basic@api.github.com/repos').replace(".diff", "")
-        print(diff_url, diff_headers)
+
         diff_request = requests.get(url=diff_url, headers=diff_headers)
         if diff_request.status_code == 200:
             return diff_request.text
