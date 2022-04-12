@@ -69,7 +69,6 @@ class GitHubClient(object):
 
     def get_last_diff(self):
         """Get the last diff."""
-        print(self.diff_url)
         if self.diff_url:
             # Diff url was directly passed in config, likely due to this being a PR
             diff_url = self.diff_url
@@ -83,11 +82,18 @@ class GitHubClient(object):
             # There are several commits: compare with the oldest one
             oldest = sorted(self.commits, key=self.get_timestamp)[0]['id']
             diff_url = f'{self.repos_url}{self.repo}/compare/{oldest}...{self.sha}'    
-        
+
         diff_headers = {
             'Accept': 'application/vnd.github.v3.diff',
             'Authorization': f'token {self.token}'
         }
+
+        # change an input like https://github.com/{org}/{repo}/{extra}.diff
+        # to https://{token}:x-oauth-basic@api.github.com/repos/{org}/{repo}/{extra}
+
+        print(diff_url, diff_headers)
+        diff_url = diff_url.replace('github.com', f'{self.token}:x-oauth-basic@api.github.com/repos').replace(".diff", "")
+        print(diff_url, diff_headers)
         diff_request = requests.get(url=diff_url, headers=diff_headers)
         if diff_request.status_code == 200:
             return diff_request.text
