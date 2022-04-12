@@ -69,6 +69,7 @@ class GitHubClient(object):
 
     def get_last_diff(self):
         """Get the last diff."""
+        print(self.diff_url)
         if self.diff_url:
             # Diff url was directly passed in config, likely due to this being a PR
             diff_url = self.diff_url
